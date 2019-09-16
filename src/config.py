@@ -10,6 +10,11 @@ import os
 class Config:
     def __init__(self):
         self.pwd_path = os.path.abspath(os.path.dirname(__file__))
+        self.origin_train_file = self.pwd_path + '/../data/train_sample.csv'
+        self.origin_test_file = self.pwd_path + '/../data/test_sample.csv'
+        self.train_file = self.pwd_path + '/../data/train_sample_segment.csv'
+        self.test_file = self.pwd_path + '/../data/test_sample_segment.csv'
+
         # self.model = {
         #     'model1' : AttentionModel,
         #     'model2' : CovlstmModel,
@@ -28,12 +33,11 @@ class Config:
         self.BATCH_SIZE = 64
         self.EPOCH = 2
 
-        self.TEXT_X = self.pwd_path + '/../data/News_cut_test_text.txt'
+        self.TEXT_ = self.pwd_path + '/../data/train_sample.csv'
         self.ITEM_TO_ID = '../data/item_to_id_small.pkl'
         self.ID_TO_ITEM = '../data/id_to_item_small.pkl'
         self.EMBEDDING_FILE = "../data/chinese_emb.bin"
-        self.TRAIN_X = '../data/All_cut_train_text.txt'
-        self.TEST_FILE = '../data/All_cut_test_text.txt'
+
         self.FEATURES_FILE = '../data/train_features.pkl'
         self.STOP_WORD_FILE = self.pwd_path + '/../data/stopword.txt'
         self.ORIGIN_LABEL_FILE = '../data/News_pic_label_train.txt'

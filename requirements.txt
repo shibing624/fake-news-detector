@@ -1,3 +1,5 @@
 jieba
 scipy
 scikit-learn
+seaborn
+wordcloud
