@@ -12,8 +12,8 @@ from src.models.xgboost_lr_model import XGBLR
 
 
 class XGBLRModel(object):
-    def __init__(self, data_file_path, model_path='xgblr.model'):
-        self.model_path = model_path
+    def __init__(self, data_file_path, model_path=''):
+        self.model_path = model_path if model_path else config.output_dir + 'xgblr.model'
         self.data_file_path = data_file_path
 
     def cv(self, feature_label_path, n=5):
