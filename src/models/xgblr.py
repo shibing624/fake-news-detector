@@ -1,28 +1,18 @@
-# -*- coding: utf-8 -*-
-"""
-@author:XuMing（xuming624@qq.com)
-@description: 
-"""
 import pickle
 from datetime import datetime
 
 import numpy as np
 import pandas as pd
-from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import KFold
 
 from src import config
+from src.models.lr import load_features_label
 from src.models.score import compute_acc
+from src.models.xgboost_lr_model import XGBLR
 
 
-def load_features_label(path):
-    with open(path, 'rb') as f:
-        [train_data_x, test_data_x, data_y] = pickle.load(f)
-    return train_data_x, test_data_x, data_y
-
-
-class LRModel(object):
-    def __init__(self, data_file_path, model_path='lr.model'):
+class XGBLRModel(object):
+    def __init__(self, data_file_path, model_path='xgblr.model'):
         self.model_path = model_path
         self.data_file_path = data_file_path
 
@@ -45,7 +35,7 @@ class LRModel(object):
             y_train = y[tr]
             x_valid = train_data_x[va]
             y_valid = y[va]
-            clf = LogisticRegression()
+            clf = XGBLR()
             clf.fit(x_train, y_train)
             y_pred_valid = clf.predict_proba(x_valid)
             y_pred_test = clf.predict_proba(test_data_x)
@@ -57,9 +47,9 @@ class LRModel(object):
         for i in range(stack_all.shape[1]):
             data['{}_{}'.format('label', i)] = stack_all[:, i]
 
-        data.to_csv(config.output_dir + 'lr_stack.csv', columns=['id', 'label_0', 'label_1'],
+        data.to_csv(config.output_dir + 'xgblr_stack.csv', columns=['id', 'label_0', 'label_1'],
                     encoding='utf-8')
-        print(datetime.now(), 'save lr stack done!')
+        print(datetime.now(), 'save xgblr stack done!')
         # save model
         with open(self.model_path, 'wb') as f:
             pickle.dump(clf, f)
@@ -67,5 +57,5 @@ class LRModel(object):
 
 
 if __name__ == '__main__':
-    model = LRModel(config.ngram_feature_path)
+    model = XGBLRModel(config.ngram_feature_path)
     model.cv(config.features_label_path)

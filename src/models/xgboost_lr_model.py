@@ -2,13 +2,14 @@
 # Author: XuMing <xuming624@qq.com>
 # Brief: 
 
+import os
 import pickle
 
 import xgboost as xgb
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import OneHotEncoder
 from xgboost import DMatrix
-import os
+
 
 class XGBLR(object):
     """
@@ -16,14 +17,14 @@ class XGBLR(object):
     xgboost's output as the input feature of LR
     """
 
-    def __init__(self, model_path=''):
+    def __init__(self, model_path='xgblr.model'):
         self.lr_clf = LogisticRegression()
         self.one_hot_encoder = OneHotEncoder()
         self.xgb_clf = xgb.XGBClassifier()
         self.model_path = model_path
         self.init = False
 
-    def train_model(self, train_x, train_y):
+    def fit(self, train_x, train_y):
         """
         train a xgboost_lr model
         :param train_x:
