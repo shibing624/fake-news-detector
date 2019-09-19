@@ -3,11 +3,15 @@
 @author:XuMing（xuming624@qq.com)
 @description: 
 """
+import pickle
+
 import numpy as np
 from scipy.sparse import vstack
-from src.features.tfidf_feature import TfidfFeatureGenerator
 from sklearn.decomposition import TruncatedSVD
-import pickle
+
+from src import config
+from src.features.math_util import cosine_sim
+from src.features.tfidf_feature import TfidfFeatureGenerator
 
 
 class SvdFeatureGenerator(object):
@@ -27,123 +31,70 @@ class SvdFeatureGenerator(object):
         n_test = test.shape[0]
         print('n_test:', n_test)
 
-        tfidfGenerator = TfidfFeatureGenerator('tfidf')
-        featuresTrain = tfidfGenerator.read('train')
-        xHeadlineTfidfTrain, xBodyTfidfTrain = featuresTrain[0], featuresTrain[1]
+        tfidf_generator = TfidfFeatureGenerator()
+        features_train = tfidf_generator.read('train')
+        text_tfidf_train = features_train[0]
 
-        xHeadlineTfidf = xHeadlineTfidfTrain
-        xBodyTfidf = xBodyTfidfTrain
+        text_tfidf = text_tfidf_train
         if n_test > 0:
             # test set is available
-            featuresTest = tfidfGenerator.read('test')
-            xHeadlineTfidfTest, xBodyTfidfTest = featuresTest[0], featuresTest[1]
-            xHeadlineTfidf = vstack([xHeadlineTfidfTrain, xHeadlineTfidfTest])
-            xBodyTfidf = vstack([xBodyTfidfTrain, xBodyTfidfTest])
+            features_test = tfidf_generator.read('test')
+            text_tfidf_test = features_test[0]
+            text_tfidf = vstack([text_tfidf_train, text_tfidf_test])
 
         # compute the cosine similarity between truncated-svd features
         svd = TruncatedSVD(n_components=50, n_iter=15)
-        xHBTfidf = vstack([xHeadlineTfidf, xBodyTfidf])
-        svd.fit(xHBTfidf)  # fit to the combined train-test set (or the full training set for cv process)
-        print
-        'xHeadlineTfidf.shape:'
-        print
-        xHeadlineTfidf.shape
-        xHeadlineSvd = svd.transform(xHeadlineTfidf)
-        print
-        'xHeadlineSvd.shape:'
-        print
-        xHeadlineSvd.shape
+        svd.fit(text_tfidf)  # fit to the combined train-test set (or the full training set for cv process)
+        print('text Tfidf.shape:', text_tfidf.shape)
+        text_svd = svd.transform(text_tfidf)
+        print('text Svd.shape:', text_svd.shape)
 
-        xHeadlineSvdTrain = xHeadlineSvd[:n_train, :]
-        outfilename_hsvd_train = "train.headline.svd.pkl"
-        with open(outfilename_hsvd_train, "wb") as outfile:
-            cPickle.dump(xHeadlineSvdTrain, outfile, -1)
-        print
-        'headline svd features of training set saved in %s' % outfilename_hsvd_train
+        text_svd_train = text_svd[:n_train, :]
+        text_svd_train_path = config.output_dir + "train.text.svd.pkl"
+        with open(text_svd_train_path, "wb") as f:
+            pickle.dump(text_svd_train, f)
+        print('text svd features of training set saved in %s' % text_svd_train_path)
 
         if n_test > 0:
             # test set is available
-            xHeadlineSvdTest = xHeadlineSvd[n_train:, :]
-            outfilename_hsvd_test = "test.headline.svd.pkl"
-            with open(outfilename_hsvd_test, "wb") as outfile:
-                cPickle.dump(xHeadlineSvdTest, outfile, -1)
-            print
-            'headline svd features of test set saved in %s' % outfilename_hsvd_test
+            text_svd_test = text_svd[n_train:, :]
+            text_svd_test_path = config.output_dir + "test.text.svd.pkl"
+            with open(text_svd_test_path, "wb") as f:
+                pickle.dump(text_svd_test, f)
+            print('text svd features of test set saved in %s' % text_svd_test_path)
 
-        xBodySvd = svd.transform(xBodyTfidf)
-        print
-        'xBodySvd.shape:'
-        print
-        xBodySvd.shape
-
-        xBodySvdTrain = xBodySvd[:n_train, :]
-        outfilename_bsvd_train = "train.body.svd.pkl"
-        with open(outfilename_bsvd_train, "wb") as outfile:
-            cPickle.dump(xBodySvdTrain, outfile, -1)
-        print
-        'body svd features of training set saved in %s' % outfilename_bsvd_train
-
-        if n_test > 0:
-            # test set is available
-            xBodySvdTest = xBodySvd[n_train:, :]
-            outfilename_bsvd_test = "test.body.svd.pkl"
-            with open(outfilename_bsvd_test, "wb") as outfile:
-                cPickle.dump(xBodySvdTest, outfile, -1)
-            print
-            'body svd features of test set saved in %s' % outfilename_bsvd_test
-
-        simSvd = np.asarray(map(cosine_sim, xHeadlineSvd, xBodySvd))[:, np.newaxis]
-        print
-        'simSvd.shape:'
-        print
-        simSvd.shape
-
-        simSvdTrain = simSvd[:n_train]
-        outfilename_simsvd_train = "train.sim.svd.pkl"
-        with open(outfilename_simsvd_train, "wb") as outfile:
-            cPickle.dump(simSvdTrain, outfile, -1)
-        print
-        'svd sim. features of training set saved in %s' % outfilename_simsvd_train
-
-        if n_test > 0:
-            # test set is available
-            simSvdTest = simSvd[n_train:]
-            outfilename_simsvd_test = "test.sim.svd.pkl"
-            with open(outfilename_simsvd_test, "wb") as outfile:
-                cPickle.dump(simSvdTest, outfile, -1)
-            print
-            'svd sim. features of test set saved in %s' % outfilename_simsvd_test
-
-        return 1
+        # sim_svd = np.asarray(map(cosine_sim, text_svd, text_svd))[:, np.newaxis]
+        # print('sim svd.shape:', sim_svd.shape)
+        #
+        # sim_svd_train = sim_svd[:n_train]
+        # sim_svd_train_path = config.output_dir + "train.sim.svd.pkl"
+        # with open(sim_svd_train_path, "wb") as f:
+        #     pickle.dump(sim_svd_train, f)
+        # print('sim svd features of training set saved in %s' % sim_svd_train_path)
+        #
+        # if n_test > 0:
+        #     # test set is available
+        #     sim_svd_test = sim_svd[n_train:]
+        #     sim_svd_test_path = config.output_dir + "test.sim.svd.pkl"
+        #     with open(sim_svd_test_path, "wb") as f:
+        #         pickle.dump(sim_svd_test, f)
+        #     print('sim svd features of test set saved in %s' % sim_svd_test_path)
 
     def read(self, header='train'):
+        text_svd_feature_path = config.output_dir + "%s.text.svd.pkl" % header
+        with open(text_svd_feature_path, "rb") as f:
+            text_svd = pickle.load(f)
 
-        filename_hsvd = "%s.headline.svd.pkl" % header
-        with open(filename_hsvd, "rb") as infile:
-            xHeadlineSvd = cPickle.load(infile)
+        # body_svd_feature_path = config.output_dir +"%s.body.svd.pkl" % header
+        # with open(body_svd_feature_path, "rb") as f:
+        #     body_svd = pickle.load(f)
 
-        filename_bsvd = "%s.body.svd.pkl" % header
-        with open(filename_bsvd, "rb") as infile:
-            xBodySvd = cPickle.load(infile)
+        # sim_svd_feature_path = config.output_dir + "%s.sim.svd.pkl" % header
+        # with open(sim_svd_feature_path, "rb") as f:
+        #     sim_svd = pickle.load(f)
 
-        filename_simsvd = "%s.sim.svd.pkl" % header
-        with open(filename_simsvd, "rb") as infile:
-            simSvd = cPickle.load(infile)
-
-        print
-        'xHeadlineSvd.shape:'
-        print
-        xHeadlineSvd.shape
-        # print type(xHeadlineSvd)
-        print
-        'xBodySvd.shape:'
-        print
-        xBodySvd.shape
-        # print type(xBodySvd)
-        print
-        'simSvd.shape:'
-        print
-        simSvd.shape
-        # print type(simSvd)
-
-        return [xHeadlineSvd, xBodySvd, simSvd.reshape(-1, 1)]
+        print('text_svd.shape:', text_svd.shape)
+        # print('body_svd.shape:', body_svd.shape)
+        # print('sim_svd.shape:', sim_svd.shape)
+        # return [text_svd, sim_svd.reshape(-1, 1)]
+        return [text_svd]

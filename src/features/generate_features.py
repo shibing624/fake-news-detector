@@ -3,50 +3,74 @@
 @author:XuMing（xuming624@qq.com)
 @description: 
 """
+import os
 import pickle
 
+import numpy as np
 import pandas as pd
+from scipy.sparse import csr_matrix
 
 from src import config
 from src.features import ngram
 from src.features.count_feature import CountFeatureGenerator
+from src.features.sentiment_feature import SentimentFeatureGenerator
+from src.features.svd_feature import SvdFeatureGenerator
 from src.features.tfidf_feature import TfidfFeatureGenerator
 from src.features.tokenizer import tokenizer
+from src.features.word2vec_feature import Word2VecFeatureGenerator
 
 
 def process():
     # -----------------------load data--------------------
-    data = pd.read_pickle(config.data_file_path)
-    print(data.shape)
+    if not os.path.exists(config.ngram_feature_path):
+        data = pd.read_pickle(config.data_file_path)
+        print(data.shape)
 
-    print("generate unigram")
-    data["text_unigram"] = data["text"].map(lambda x: tokenizer(x))
+        # for test
+        data_a = data[:100]
+        data_b = data[-10:]
+        data = pd.concat([data_a, data_b])
+        print(data.shape)
 
-    print("generate bigram")
-    join_str = "_*_"
-    data["text_bigram"] = data["text_unigram"].map(lambda x: ngram.getBigram(x, join_str))
+        print("generate unigram")
+        data["text_unigram"] = data["text"].map(lambda x: tokenizer(x))
 
-    print("generate trigram")
-    join_str = "_*_"
-    data["text_trigram"] = data["text_unigram"].map(lambda x: ngram.getTrigram(x, join_str))
+        print("generate bigram")
+        join_str = "_*_"
+        data["text_bigram"] = data["text_unigram"].map(lambda x: ngram.getBigram(x, join_str))
 
-    with open(config.feature_file_path, 'wb') as f:
-        pickle.dump(data, f)
-        print('data features saved in ', config.feature_file_path)
+        print("generate trigram")
+        join_str = "_*_"
+        data["text_trigram"] = data["text_unigram"].map(lambda x: ngram.getTrigram(x, join_str))
+
+        with open(config.ngram_feature_path, 'wb') as f:
+            pickle.dump(data, f)
+            print('data ngram features saved in ', config.ngram_feature_path)
+    else:
+        data = pd.read_pickle(config.ngram_feature_path)
 
     # feature generators
-    # svdFG = SvdFeatureGenerator()
-    # word2vecFG = Word2VecFeatureGenerator()
-    # sentiFG = SentimentFeatureGenerator()
-    # generators = [countFG, tfidfFG, svdFG, word2vecFG, sentiFG]
-    generators = [CountFeatureGenerator(), TfidfFeatureGenerator()]
+    generators = [CountFeatureGenerator(), TfidfFeatureGenerator(), SvdFeatureGenerator(), Word2VecFeatureGenerator(),
+                  SentimentFeatureGenerator()]
 
     for g in generators:
-        g.process(data[:100])
+        g.process(data)
 
-    for g in generators:
-        g.read('train')
+    # build data
+    data_y = data['label'].values
+    train_features = [f for g in generators for f in g.read('train')]
+    train_features = [f.toarray() if isinstance(f, csr_matrix) else f for f in train_features]
+    train_data_x = np.hstack(train_features)
+    print('train data_x.shape:', train_data_x.shape)
 
+    test_features = [f for g in generators for f in g.read('test')]
+    test_features = [f.toarray() if isinstance(f, csr_matrix) else f for f in test_features]
+    test_data_x = np.hstack(test_features)
+    print('test data_x.shape:', test_data_x.shape)
+
+    with open(config.features_label_path, 'wb') as f:
+        pickle.dump([train_data_x, test_data_x, data_y], f)
+        print("features_label saved in ", config.features_label_path)
     print('done')
 
 
