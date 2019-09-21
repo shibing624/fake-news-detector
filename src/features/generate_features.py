@@ -27,10 +27,10 @@ def process():
         print(data.shape)
 
         # for test
-        data_a = data[:100]
-        data_b = data[-10:]
-        data = pd.concat([data_a, data_b])
-        print(data.shape)
+        # data_a = data[:100]
+        # data_b = data[-10:]
+        # data = pd.concat([data_a, data_b])
+        # print(data.shape)
 
         print("generate unigram")
         data["text_unigram"] = data["text"].map(lambda x: tokenizer(x))

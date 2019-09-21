@@ -3,4 +3,4 @@ scipy
 scikit-learn
 seaborn
 wordcloud
-baidu-aip
+sentiment-classifier-zh

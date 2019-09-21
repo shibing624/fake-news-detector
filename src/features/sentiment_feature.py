@@ -6,9 +6,9 @@
 import pickle
 
 import pandas as pd
+from sentiment_classifier import rule_classifier
 
 from src import config
-import sentiment_classifier
 
 
 class SentimentFeatureGenerator(object):
@@ -33,9 +33,9 @@ class SentimentFeatureGenerator(object):
             :param text:
             :return:
             """
-            return pd.DataFrame([sentiment_classifier.classify(text)]).mean()
+            sentiment = rule_classifier.classify(text)
+            return pd.Series(sentiment)
 
-        # df['text_sents'] = df['text'].apply(lambda x: sent_tokenizer(x))
         df = pd.concat([df, df['text'].apply(lambda x: compute_sentiment(x))], axis=1)
         df.rename(columns={'score': 'text_score'}, inplace=True)
         text_sentiment = df[['text_score']].values
