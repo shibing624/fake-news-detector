@@ -57,7 +57,7 @@ class LRModel(object):
         for i in range(stack_all.shape[1]):
             data['{}_{}'.format('label', i)] = stack_all[:, i]
 
-        data.to_csv(config.output_dir + 'lr_stack.csv', columns=['id', 'label_0', 'label_1'],
+        data.to_csv(config.output_dir + 'lr_stack.csv', columns=['id', 'label', 'label_0', 'label_1'],
                     encoding='utf-8')
         print(datetime.now(), 'save lr stack done!')
         # save model

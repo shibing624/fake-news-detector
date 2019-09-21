@@ -1,3 +1,8 @@
+# -*- coding: utf-8 -*-
+"""
+@author:XuMing（xuming624@qq.com)
+@description:
+"""
 import pickle
 from datetime import datetime
 
@@ -35,7 +40,7 @@ class XGBLRModel(object):
             y_train = y[tr]
             x_valid = train_data_x[va]
             y_valid = y[va]
-            clf = XGBLR()
+            clf = XGBLR(self.model_path)
             clf.fit(x_train, y_train)
             y_pred_valid = clf.predict_proba(x_valid)
             y_pred_test = clf.predict_proba(test_data_x)
@@ -47,7 +52,7 @@ class XGBLRModel(object):
         for i in range(stack_all.shape[1]):
             data['{}_{}'.format('label', i)] = stack_all[:, i]
 
-        data.to_csv(config.output_dir + 'xgblr_stack.csv', columns=['id', 'label_0', 'label_1'],
+        data.to_csv(config.output_dir + 'xgblr_stack.csv', columns=['id', 'label', 'label_0', 'label_1'],
                     encoding='utf-8')
         print(datetime.now(), 'save xgblr stack done!')
         # save model

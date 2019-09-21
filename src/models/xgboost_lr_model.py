@@ -17,7 +17,7 @@ class XGBLR(object):
     xgboost's output as the input feature of LR
     """
 
-    def __init__(self, model_path='xgblr.model'):
+    def __init__(self, model_path):
         self.lr_clf = LogisticRegression()
         self.one_hot_encoder = OneHotEncoder()
         self.xgb_clf = xgb.XGBClassifier()
