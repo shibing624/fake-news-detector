@@ -19,8 +19,15 @@ from src.features.tfidf_feature import TfidfFeatureGenerator
 from src.features.tokenizer import tokenizer
 from src.features.word2vec_feature import Word2VecFeatureGenerator
 
+# feature generators
+generators = [CountFeatureGenerator(),
+              TfidfFeatureGenerator(),
+              SvdFeatureGenerator(),
+              Word2VecFeatureGenerator(),
+              SentimentFeatureGenerator()]
 
-def process():
+
+def generate_features_label():
     # -----------------------load data--------------------
     if not os.path.exists(config.ngram_feature_path):
         data = pd.read_pickle(config.data_file_path)
@@ -49,17 +56,22 @@ def process():
     else:
         data = pd.read_pickle(config.ngram_feature_path)
 
-    # feature generators
-    generators = [CountFeatureGenerator(), TfidfFeatureGenerator(), SvdFeatureGenerator(), Word2VecFeatureGenerator(),
-                  SentimentFeatureGenerator()]
-
     for g in generators:
         g.process(data)
 
+    print('done')
+
+
+def read_features_label():
+    data = pd.read_pickle(config.ngram_feature_path)
+
     # build data
+    print("generate feature labels data...")
     data_y = data['label'].values
     train_features = [f for g in generators for f in g.read('train')]
     train_features = [f.toarray() if isinstance(f, csr_matrix) else f for f in train_features]
+    for i, f in enumerate(train_features):
+        print('shape: ', i, f.shape)
     train_data_x = np.hstack(train_features)
     print('train data_x.shape:', train_data_x.shape)
 
@@ -67,12 +79,8 @@ def process():
     test_features = [f.toarray() if isinstance(f, csr_matrix) else f for f in test_features]
     test_data_x = np.hstack(test_features)
     print('test data_x.shape:', test_data_x.shape)
-
-    with open(config.features_label_path, 'wb') as f:
-        pickle.dump([train_data_x, test_data_x, data_y], f)
-        print("features_label saved in ", config.features_label_path)
-    print('done')
+    return train_data_x, test_data_x, data_y
 
 
 if __name__ == "__main__":
-    process()
+    generate_features_label()

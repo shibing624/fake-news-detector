@@ -12,13 +12,8 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import KFold
 
 from src import config
+from src.features.generate_features import read_features_label
 from src.models.score import compute_acc
-
-
-def load_features_label(path):
-    with open(path, 'rb') as f:
-        [train_data_x, test_data_x, data_y] = pickle.load(f)
-    return train_data_x, test_data_x, data_y
 
 
 class LRModel(object):
@@ -26,12 +21,12 @@ class LRModel(object):
         self.model_path = model_path if model_path else config.output_dir + 'lr.model'
         self.data_file_path = data_file_path
 
-    def cv(self, feature_label_path, n=5):
-        train_data_x, test_data_x, data_y = load_features_label(feature_label_path)
+    def cv(self, n=5):
+        train_data_x, test_data_x, data_y = read_features_label()
         n_train = len(train_data_x)
         y = data_y[:n_train]
         data = pd.read_pickle(self.data_file_path)
-        print(data.shape)
+        print('data.shape:', data.shape)
 
         # -----------------------stack for label------------------
         num_class = len(pd.value_counts(y))
@@ -68,4 +63,4 @@ class LRModel(object):
 
 if __name__ == '__main__':
     model = LRModel(config.ngram_feature_path)
-    model.cv(config.features_label_path)
+    model.cv()

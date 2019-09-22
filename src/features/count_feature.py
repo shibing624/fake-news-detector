@@ -63,3 +63,7 @@ class CountFeatureGenerator(object):
             print('feature names: ', feat_names)
             print('count_feature.shape:', count_feature.shape)
         return [count_feature]
+
+    def official_news(self):
+        official_names = ["text"]
+        print("generate official news features")

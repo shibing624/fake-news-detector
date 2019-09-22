@@ -6,7 +6,7 @@
 import pickle
 
 import pandas as pd
-from sentiment_classifier import rule_classifier
+from pysenti import rule_classifier
 
 from src import config
 

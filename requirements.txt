@@ -3,4 +3,4 @@ scipy
 scikit-learn
 seaborn
 wordcloud
-sentiment-classifier-zh
+pysenti
