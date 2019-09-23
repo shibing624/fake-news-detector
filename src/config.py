@@ -15,6 +15,7 @@ output_dir = pwd_path + '/../output/'
 
 data_file_path = output_dir + 'data.pkl'
 ngram_feature_path = output_dir + 'text_ngram.pkl'
+vocab_path = output_dir + 'vocab.txt'
 
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)

@@ -43,11 +43,11 @@ class SvdFeatureGenerator(object):
             text_tfidf = vstack([text_tfidf_train, text_tfidf_test])
 
         # compute the cosine similarity between truncated-svd features
-        svd = TruncatedSVD(n_components=50, n_iter=15)
+        svd = TruncatedSVD(n_components=250, n_iter=15)
         svd.fit(text_tfidf)  # fit to the combined train-test set (or the full training set for cv process)
         print('text Tfidf.shape:', text_tfidf.shape)
         text_svd = svd.transform(text_tfidf)
-        print('text Svd.shape:', text_svd.shape)
+        print('text svd.shape:', text_svd.shape)
 
         text_svd_train = text_svd[:n_train, :]
         text_svd_train_path = config.output_dir + "train.text.svd.pkl"

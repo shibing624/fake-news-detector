@@ -12,19 +12,14 @@ from scipy.sparse import csr_matrix
 
 from src import config
 from src.features import ngram
+from src.features.char_tfidf_feature import CharTfidfFeatureGenerator
 from src.features.count_feature import CountFeatureGenerator
+from src.features.onehot_feature import OnehotFeatureGenerator
 from src.features.sentiment_feature import SentimentFeatureGenerator
 from src.features.svd_feature import SvdFeatureGenerator
 from src.features.tfidf_feature import TfidfFeatureGenerator
 from src.features.tokenizer import tokenizer
 from src.features.word2vec_feature import Word2VecFeatureGenerator
-
-# feature generators
-generators = [CountFeatureGenerator(),
-              TfidfFeatureGenerator(),
-              SvdFeatureGenerator(),
-              Word2VecFeatureGenerator(),
-              SentimentFeatureGenerator()]
 
 
 def generate_features_label():
@@ -33,22 +28,24 @@ def generate_features_label():
         data = pd.read_pickle(config.data_file_path)
         print(data.shape)
 
-        # for test
-        # data_a = data[:100]
-        # data_b = data[-10:]
-        # data = pd.concat([data_a, data_b])
-        # print(data.shape)
+        # test
+        data_a = data[:1000]
+        data_b = data[-100:]
+        data = pd.concat((data_a, data_b))
+        print('data shape:', data.shape)
 
         print("generate unigram")
         data["text_unigram"] = data["text"].map(lambda x: tokenizer(x))
 
         print("generate bigram")
-        join_str = "_*_"
+        join_str = "_"
         data["text_bigram"] = data["text_unigram"].map(lambda x: ngram.getBigram(x, join_str))
 
         print("generate trigram")
-        join_str = "_*_"
         data["text_trigram"] = data["text_unigram"].map(lambda x: ngram.getTrigram(x, join_str))
+
+        data["text_unigram_str"] = data["text_unigram"].map(lambda x: ' '.join(x))
+        print(data.head())
 
         with open(config.ngram_feature_path, 'wb') as f:
             pickle.dump(data, f)
@@ -56,6 +53,14 @@ def generate_features_label():
     else:
         data = pd.read_pickle(config.ngram_feature_path)
 
+    # feature generators
+    generators = [CountFeatureGenerator(),
+                  CharTfidfFeatureGenerator(),
+                  TfidfFeatureGenerator(),
+                  SvdFeatureGenerator(),
+                  Word2VecFeatureGenerator(),
+                  SentimentFeatureGenerator(),
+                  OnehotFeatureGenerator()]
     for g in generators:
         g.process(data)
 
@@ -65,8 +70,13 @@ def generate_features_label():
 def read_features_label():
     data = pd.read_pickle(config.ngram_feature_path)
 
+    generators = [CountFeatureGenerator(),
+                  SvdFeatureGenerator(),
+                  Word2VecFeatureGenerator(),
+                  SentimentFeatureGenerator()]
+
     # build data
-    print("generate feature labels data...")
+    print("read feature labels data...")
     data_y = data['label'].values
     train_features = [f for g in generators for f in g.read('train')]
     train_features = [f.toarray() if isinstance(f, csr_matrix) else f for f in train_features]
@@ -78,6 +88,22 @@ def read_features_label():
     test_features = [f for g in generators for f in g.read('test')]
     test_features = [f.toarray() if isinstance(f, csr_matrix) else f for f in test_features]
     test_data_x = np.hstack(test_features)
+    print('test data_x.shape:', test_data_x.shape)
+    return train_data_x, test_data_x, data_y
+
+
+def read_onehot_feature_label():
+    data = pd.read_pickle(config.ngram_feature_path)
+
+    g= OnehotFeatureGenerator()
+
+    # build data
+    print("read feature labels data...")
+    data_y = data['label'].values
+    train_data_x = g.read('train')
+    print('train data_x.shape:', train_data_x.shape)
+
+    test_data_x = g.read('test')
     print('test data_x.shape:', test_data_x.shape)
     return train_data_x, test_data_x, data_y
 

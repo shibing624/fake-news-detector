@@ -4,6 +4,12 @@
 @description: This file provides functions to compute n-gram & n-term.
 """
 
+def add_empty_str(words, join_str=' '):
+    r = ''
+    for w in words:
+        t = str(w) + join_str
+        r += t
+    return r
 
 def getUnigram(words):
     """

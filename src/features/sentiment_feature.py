@@ -16,6 +16,7 @@ class SentimentFeatureGenerator(object):
         self.name = name
 
     def process(self, df):
+        print('process:', self.name)
         print('generating sentiment features')
 
         train = df[df['type'] == 'train']

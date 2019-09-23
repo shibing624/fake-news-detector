@@ -4,3 +4,4 @@ scikit-learn
 seaborn
 wordcloud
 pysenti
+xgboost

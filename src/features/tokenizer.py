@@ -21,15 +21,15 @@ def load_set(path):
     return lines
 
 
-def tokenizer(line, stopwords_path=config.stopwords_path, cut_type='char'):
-    stopwords = load_set(stopwords_path)
+def tokenizer(line, filter_stopwords=False, cut_type='word'):
     if cut_type == 'word':
         seg_list = jieba.lcut(line)
     elif cut_type == 'char':
         seg_list = list(line)
     else:
         raise ValueError("cut type is word or char.")
-    if stopwords:
+    if filter_stopwords:
+        stopwords = load_set(config.stopwords_path)
         seg_list = [x for x in seg_list if x not in stopwords]
     return seg_list
 

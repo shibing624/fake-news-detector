@@ -12,7 +12,13 @@ import numpy as np
 from sklearn.preprocessing import normalize
 
 from src import config
-from src.features.tokenizer import tokenizer
+
+
+def save_sentence(lines, sentence_path):
+    with open(sentence_path, 'w', encoding='utf-8') as f:
+        for line in lines:
+            f.write('%s\n' % line.strip())
+    print('save sentence:%s' % sentence_path)
 
 
 class Word2VecFeatureGenerator(object):
@@ -20,9 +26,8 @@ class Word2VecFeatureGenerator(object):
         self.name = name
 
     def process(self, df):
+        print('process:', self.name)
         print('generating word2vec features')
-        df["text_unigram_vec"] = df["text"].map(lambda x: tokenizer(x, stopwords_path='', cut_type='word'))
-
         train = df[df['type'] == 'train']
         print(train.head())
 
@@ -39,7 +44,7 @@ class Word2VecFeatureGenerator(object):
         w2v_bin_path = config.output_dir + 'text_w2v.bin'
         if not os.path.exists(w2v_bin_path):
             # train pre-trained word vectors
-            text_segment = df['text_unigram_vec'].map(lambda x: ' '.join(x)).tolist()
+            text_segment = df['text_unigram_str'].tolist()
             text_segment_path = config.output_dir + 'text_segment.txt'
             save_sentence(text_segment, text_segment_path)
             print('train w2v model...')
@@ -53,7 +58,7 @@ class Word2VecFeatureGenerator(object):
         model = gensim.models.KeyedVectors.load_word2vec_format(w2v_bin_path, binary=True)
         print('model loaded')
 
-        text_unigram_array = df['text_unigram_vec'].values
+        text_unigram_array = df['text_unigram'].values
         print('text_unigram_array:', text_unigram_array.tolist()[:5])
         print('text_unigram_array.shape:', text_unigram_array.shape)
 
@@ -114,10 +119,3 @@ class Word2VecFeatureGenerator(object):
 
         # return [text_vec, sim_vec]
         return [text_vec]
-
-
-def save_sentence(lines, sentence_path):
-    with open(sentence_path, 'w', encoding='utf-8') as f:
-        for line in lines:
-            f.write('%s\n' % line.strip())
-    print('save sentence:%s' % sentence_path)

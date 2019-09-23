@@ -10,6 +10,7 @@ class CountFeatureGenerator(object):
         self.name = name
 
     def process(self, df):
+        print('process:', self.name)
         grams = ["unigram", "bigram", "trigram"]
         feat_names = ["text"]
         print("generate counting features")
@@ -29,6 +30,23 @@ class CountFeatureGenerator(object):
 
         # dump the basic counting features into a file
         feat_names = [n for n in df.columns if "count" in n or "ratio" in n or "len_sent" in n]
+
+        check_words = ["网易新闻",
+                       "公安",
+                       "地震台网",
+                       "温馨提示",
+                       "派出所",
+                       "宣传部",
+                       "新闻网",
+                       "腾讯新闻",
+                       "辟谣",
+                       "日报",
+                       "外交部"]
+        print("generate official news feature")
+        for w in check_words:
+            fname = '%s_exist' % w
+            feat_names.append(fname)
+            df[fname] = df['text'].map(lambda x: 1 if w in x else 0)
 
         print('CountFeatures:', df.head())
         # split into train, test portion and save in separate files
@@ -63,7 +81,3 @@ class CountFeatureGenerator(object):
             print('feature names: ', feat_names)
             print('count_feature.shape:', count_feature.shape)
         return [count_feature]
-
-    def official_news(self):
-        official_names = ["text"]
-        print("generate official news features")
