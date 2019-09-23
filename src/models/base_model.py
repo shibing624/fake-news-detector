@@ -6,7 +6,6 @@
 from datetime import datetime
 
 import numpy as np
-
 import pandas as pd
 from sklearn.model_selection import KFold
 from sklearn.model_selection import train_test_split
@@ -16,12 +15,11 @@ from src.models.score import compute_acc
 
 class BaseDeepModel(object):
     """
-    basic class of all models
+    basic class of deep models
     """
 
-    def __init__(self, max_len=400,
-                 vocabulary_size=10000,
-                 embedding_matrix=None,
+    def __init__(self, vocabulary_size=20000,
+                 max_len=400,
                  name='base_deep_model',
                  num_folds=0,
                  batch_size=64,
@@ -32,11 +30,10 @@ class BaseDeepModel(object):
         self.name = name
         self.batch_size = batch_size
         self.max_len = max_len
-        self.embedding_matrix = embedding_matrix
         self.num_classes = num_classes
         self.embedding_dim = embedding_dim
         self.hidden_dim = hidden_dim
-        self.vocabulary_size = vocabulary_size
+        self.vocabulary_size = vocabulary_size + 1
         self.num_folds = 1 if num_folds <= 1 else num_folds
         self.num_epochs = num_epochs
         self.model = self.create_model()
@@ -56,6 +53,7 @@ class BaseDeepModel(object):
         :param predict_path: str
         :return:
         """
+        print('train and predict with model:', self.name)
         print('train_x.shape:', train_x.shape)
         print('train_y.shape:', train_y.shape)
         print('test_x.shape:', test_x.shape)
@@ -105,12 +103,17 @@ class BaseDeepModel(object):
         stack_all = np.vstack([stack, stack_test])
         for i in range(stack_all.shape[1]):
             data['{}_{}'.format('label', i)] = stack_all[:, i]
+        data['predict_label'] = np.argmax(stack_all, axis=1)
         data.to_csv(predict_path, encoding='utf-8')
         print(datetime.now(), ' predict result save to', predict_path)
         return score
 
 
 class BaseClassicModel(object):
+    """
+    basic class of classic models
+    """
+
     def __init__(self, num_folds=0, name='base_static_model', params=None):
         self.params = params
         self.name = name
@@ -132,6 +135,7 @@ class BaseClassicModel(object):
         :param predict_path: str
         :return:
         """
+        print('train and predict with model:', self.name)
         n_train = len(train_x)
         train_y = train_y[:n_train]
         print('y size:', len(train_y), '\nvalue_counts:\n', pd.value_counts(train_y))
@@ -175,6 +179,7 @@ class BaseClassicModel(object):
         stack_all = np.vstack([stack, stack_test])
         for i in range(stack_all.shape[1]):
             data['{}_{}'.format('label', i)] = stack_all[:, i]
+        data['predict_label'] = np.argmax(stack_all, axis=1)
         data.to_csv(predict_path, encoding='utf-8')
         print(datetime.now(), ' predict result save to', predict_path)
         return score

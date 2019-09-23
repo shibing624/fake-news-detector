@@ -5,3 +5,4 @@ seaborn
 wordcloud
 pysenti
 xgboost
+catboost
