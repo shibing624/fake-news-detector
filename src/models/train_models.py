@@ -45,6 +45,7 @@ def train_deep_models():
 def train_classic_models():
     train_x, test_x, train_y = read_features_label()
     models = [LRModel(), XgboostModel(), CatBoostModel()]
+    # models = [ CatBoostModel()]
     for m in models:
         score = m.train_predict(train_x, train_y, test_x, predict_path=config.output_dir + "%s.csv" % m.name)
         print(m.name, score)
