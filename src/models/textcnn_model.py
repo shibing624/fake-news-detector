@@ -25,7 +25,7 @@ class TextCNNModel(BaseDeepModel):
                  num_classes=2,
                  vocabulary_size=20000,
                  dropout=0.5,
-                 num_epochs=10,
+                 num_epochs=3,
                  model_path=config.output_dir + 'textcnn.model'):
         if "," in filter_sizes:
             self.filter_sizes = filter_sizes.split(",")
@@ -75,11 +75,6 @@ class TextCNNModel(BaseDeepModel):
 
     def fit_model(self, model, x_train, y_train, x_valid, y_valid):
         cp = ModelCheckpoint(self.model_path, monitor='val_acc', verbose=1, save_best_only=True)
-        print('x_train.shape:', x_train.shape)
-        print('y_train.shape:', y_train.shape)
-        print('x_valid.shape:', x_valid.shape)
-        print('y_valid.shape:', y_valid.shape)
         # fit and save model
         model.fit(x_train, y_train, batch_size=self.batch_size, epochs=self.num_epochs,
-                  validation_data=(x_valid, y_valid),
-                  callbacks=[cp])
+                  validation_data=(x_valid, y_valid), callbacks=[cp])

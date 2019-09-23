@@ -77,7 +77,6 @@ def read_features_label():
 
     # build data
     print("read feature labels data...")
-    data_y = data['label'].values
     train_features = [f for g in generators for f in g.read('train')]
     train_features = [f.toarray() if isinstance(f, csr_matrix) else f for f in train_features]
     for i, f in enumerate(train_features):
@@ -89,23 +88,10 @@ def read_features_label():
     test_features = [f.toarray() if isinstance(f, csr_matrix) else f for f in test_features]
     test_data_x = np.hstack(test_features)
     print('test data_x.shape:', test_data_x.shape)
-    return train_data_x, test_data_x, data_y
 
-
-def read_onehot_feature_label():
-    data = pd.read_pickle(config.ngram_feature_path)
-
-    g= OnehotFeatureGenerator()
-
-    # build data
-    print("read feature labels data...")
-    data_y = data['label'].values
-    train_data_x = g.read('train')
-    print('train data_x.shape:', train_data_x.shape)
-
-    test_data_x = g.read('test')
-    print('test data_x.shape:', test_data_x.shape)
-    return train_data_x, test_data_x, data_y
+    n_train = train_data_x.shape
+    train_data_y = data[:n_train]['label'].values
+    return train_data_x, test_data_x, train_data_y
 
 
 if __name__ == "__main__":

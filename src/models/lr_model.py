@@ -6,10 +6,10 @@
 
 from sklearn.linear_model import LogisticRegression
 
-from src.models.base_model import BaseStaticModel
+from src.models.base_model import BaseClassicModel
 
 
-class LRModel(BaseStaticModel):
+class LRModel(BaseClassicModel):
     def __init__(self, num_folds=1, name='lr'):
         super().__init__(num_folds, name=name)
 

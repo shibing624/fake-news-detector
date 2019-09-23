@@ -6,10 +6,10 @@
 
 from xgboost import XGBClassifier
 
-from src.models.base_model import BaseStaticModel
+from src.models.base_model import BaseClassicModel
 
 
-class XgboostModel(BaseStaticModel):
+class XgboostModel(BaseClassicModel):
     def __init__(self, num_folds=1, name='xgboost'):
         super().__init__(num_folds, name=name)
 

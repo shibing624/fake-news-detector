@@ -4,7 +4,8 @@
 @description: 
 """
 from src import config
-from src.features.generate_features import read_features_label, read_onehot_feature_label
+from src.features.generate_features import read_features_label
+from src.features.onehot_feature import read_onehot_feature_label
 from src.models.lr_model import LRModel
 from src.models.textcnn_model import TextCNNModel
 from src.models.xgboost_model import XgboostModel
@@ -26,5 +27,5 @@ def train_classic_models():
 
 
 if __name__ == '__main__':
-    train_classic_models()
+    # train_classic_models()
     train_deep_models()

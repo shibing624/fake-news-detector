@@ -5,6 +5,9 @@
 """
 import pickle
 
+from keras.utils import to_categorical
+
+import pandas as pd
 from keras.preprocessing.sequence import pad_sequences
 from keras.preprocessing.text import Tokenizer
 
@@ -55,12 +58,17 @@ class OnehotFeatureGenerator(object):
         # save train and test into separate files
         data_feature = pad_sequences(sequences, maxlen=400)
         print('Shape of Data Tensor:', data_feature.shape)
+        train_labels = train['label'].values
+        train_labels = to_categorical(train_labels, num_classes=len(pd.value_counts(train_labels)))
+        print('Shape of Label Tensor:', train_labels.shape)
+
         onehot_train = data_feature[:n_train, :]
         onehot_train_feature_path = config.output_dir + "train.text.onehot.pkl"
         with open(onehot_train_feature_path, "wb") as f:
             pickle.dump(onehot_train, f)
         print('text onehot features of training set saved in %s' % onehot_train_feature_path)
 
+        onehot_test = None
         if n_test > 0:
             # test set is available
             onehot_test = data_feature[n_train:, :]
@@ -68,6 +76,7 @@ class OnehotFeatureGenerator(object):
             with open(onehot_test_feature_path, "wb") as f:
                 pickle.dump(onehot_test, f)
             print('text onehot features of test set saved in %s' % onehot_test_feature_path)
+        return onehot_train, onehot_test, train_labels
 
     def read(self, header='train'):
         text_feature_path = config.output_dir + "%s.text.onehot.pkl" % header
@@ -78,9 +87,12 @@ class OnehotFeatureGenerator(object):
         return text_onehot
 
 
-if __name__ == '__main__':
-    import pandas as pd
+def read_onehot_feature_label():
+    data = pd.read_pickle(config.ngram_feature_path)
+    return OnehotFeatureGenerator().process(data)
 
+
+if __name__ == '__main__':
     data = pd.read_pickle(config.ngram_feature_path)
 
     OnehotFeatureGenerator().process(data)

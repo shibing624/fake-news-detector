@@ -6,6 +6,7 @@
 from datetime import datetime
 
 import numpy as np
+
 import pandas as pd
 from sklearn.model_selection import KFold
 from sklearn.model_selection import train_test_split
@@ -63,11 +64,12 @@ class BaseDeepModel(object):
         train_y = train_y[:n_train]
         print('train_y.shape:', train_y.shape)
         print('n_train', n_train)
-        print('y size:', len(train_y), '\nvalue_counts:\n', pd.value_counts(train_y))
-        num_class = len(pd.value_counts(train_y))
-        print('num_class:', num_class)
-        stack = np.zeros((train_x.shape[0], num_class))
-        stack_test = np.zeros((test_x.shape[0], num_class))
+        print('y size:', len(train_y))
+        num_classes = train_y.shape[1]
+        print('num_classes:', num_classes)
+
+        stack = np.zeros((train_x.shape[0], num_classes))
+        stack_test = np.zeros((test_x.shape[0], num_classes))
         scores = []
         if self.num_folds > 1:
             kf = KFold(n_splits=self.num_folds, shuffle=True, random_state=10)
@@ -78,8 +80,8 @@ class BaseDeepModel(object):
                 x_valid = train_x[va]
                 y_valid = train_y[va]
                 self.fit_model(self.model, x_train, y_train, x_valid, y_valid)
-                y_pred_valid = self.model.predict_proba(x_valid)
-                y_pred_test = self.model.predict_proba(test_x)
+                y_pred_valid = self.model.predict(x_valid)
+                y_pred_test = self.model.predict(test_x)
                 accuracy_rate = compute_acc(y_valid, y_pred_valid)
                 print('valid acc:', accuracy_rate)
                 scores.append(accuracy_rate)
@@ -88,9 +90,9 @@ class BaseDeepModel(object):
         else:
             x_train, x_valid, y_train, y_valid = train_test_split(train_x, train_y, test_size=0.1)
             self.fit_model(self.model, x_train, y_train, x_valid, y_valid)
-            y_pred_valid = self.model.predict_proba(x_valid)
-            y_pred_test = self.model.predict_proba(test_x)
-            y_pred_train = self.model.predict_proba(train_x)
+            y_pred_valid = self.model.predict(x_valid)
+            y_pred_test = self.model.predict(test_x)
+            y_pred_train = self.model.predict(train_x)
             accuracy_rate = compute_acc(y_valid, y_pred_valid)
             print('valid acc:', accuracy_rate)
             scores.append(accuracy_rate)
@@ -109,7 +111,7 @@ class BaseDeepModel(object):
         return score
 
 
-class BaseStaticModel(object):
+class BaseClassicModel(object):
     def __init__(self, num_folds=0, name='base_static_model', params=None):
         self.params = params
         self.name = name
@@ -133,7 +135,6 @@ class BaseStaticModel(object):
         """
         n_train = len(train_x)
         train_y = train_y[:n_train]
-        print('n_train', n_train)
         print('y size:', len(train_y), '\nvalue_counts:\n', pd.value_counts(train_y))
         num_class = len(pd.value_counts(train_y))
         print('num_class:', num_class)
