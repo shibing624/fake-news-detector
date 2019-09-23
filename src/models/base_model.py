@@ -65,11 +65,10 @@ class BaseDeepModel(object):
         print('train_y.shape:', train_y.shape)
         print('n_train', n_train)
         print('y size:', len(train_y))
-        num_classes = train_y.shape[1]
-        print('num_classes:', num_classes)
+        print('num_classes:', self.num_classes)
 
-        stack = np.zeros((train_x.shape[0], num_classes))
-        stack_test = np.zeros((test_x.shape[0], num_classes))
+        stack = np.zeros((train_x.shape[0], self.num_classes))
+        stack_test = np.zeros((test_x.shape[0], self.num_classes))
         scores = []
         if self.num_folds > 1:
             kf = KFold(n_splits=self.num_folds, shuffle=True, random_state=10)

@@ -4,7 +4,7 @@
 @description: 
 """
 import numpy as np
-from sklearn.metrics import classification_report
+from sklearn.metrics import classification_report, confusion_matrix
 
 LABELS = ['0', '1']
 
@@ -51,8 +51,11 @@ def report_score(actual, predicted):
 
 
 def compute_acc(y_true, y_pred):
+    if len(y_true.shape) > 1:
+        y_true = np.argmax(y_true, axis=1)
     y_pred = np.argmax(y_pred, axis=1)
     print(classification_report(y_true, y_pred))
+    print(confusion_matrix(y_true, y_pred))
     return np.mean(y_true == y_pred)
 
 

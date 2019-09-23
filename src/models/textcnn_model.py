@@ -23,9 +23,10 @@ class TextCNNModel(BaseDeepModel):
                  hidden_dim=128,
                  num_filters=512,
                  num_classes=2,
+                 batch_size=64,
                  vocabulary_size=20000,
                  dropout=0.5,
-                 num_epochs=3,
+                 num_epochs=1,
                  model_path=config.output_dir + 'textcnn.model'):
         if "," in filter_sizes:
             self.filter_sizes = filter_sizes.split(",")
@@ -41,6 +42,7 @@ class TextCNNModel(BaseDeepModel):
                                            vocabulary_size=vocabulary_size,
                                            embedding_dim=embedding_dim,
                                            hidden_dim=hidden_dim,
+                                           batch_size=batch_size,
                                            num_epochs=num_epochs)
 
     def create_model(self):

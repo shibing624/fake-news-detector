@@ -89,9 +89,8 @@ def read_features_label():
     test_data_x = np.hstack(test_features)
     print('test data_x.shape:', test_data_x.shape)
 
-    n_train = train_data_x.shape
-    train_data_y = data[:n_train]['label'].values
-    return train_data_x, test_data_x, train_data_y
+    data_y = data['label'].values
+    return train_data_x, test_data_x, data_y
 
 
 if __name__ == "__main__":

@@ -76,7 +76,7 @@ class OnehotFeatureGenerator(object):
             with open(onehot_test_feature_path, "wb") as f:
                 pickle.dump(onehot_test, f)
             print('text onehot features of test set saved in %s' % onehot_test_feature_path)
-        return onehot_train, onehot_test, train_labels
+        return onehot_train, onehot_test, train_labels, vocabulary
 
     def read(self, header='train'):
         text_feature_path = config.output_dir + "%s.text.onehot.pkl" % header
