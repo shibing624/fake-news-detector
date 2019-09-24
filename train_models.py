@@ -28,6 +28,20 @@ def generate_submit_result(data_path, predict_path, submit_path):
     print('generate submit file:', submit_path)
 
 
+def train_classic_models():
+    from models.catboost_model import CatBoostModel
+    from models.lr_model import LRModel
+    from models.xgboost_model import XgboostModel  # 该引用必须在bert之前
+    train_x, test_x, train_y = read_features_label()
+    models = [LRModel(), XgboostModel(), CatBoostModel()]
+    for m in models:
+        predict_path = config.output_dir + "%s.csv" % m.name
+        submit_path = config.output_dir + "%s_submit.csv" % m.name
+        score = m.train_predict(train_x, train_y, test_x, predict_path)
+        generate_submit_result(config.data_file_path, predict_path, submit_path=submit_path)
+        print(m.name, score)
+
+
 def train_deep_models():
     from models.rnn_model import RNNModel
     from models.textcnn_model import TextCNNModel
@@ -44,7 +58,7 @@ def train_deep_models():
                            batch_size=32,
                            vocabulary_size=len(vocab),
                            dropout=0.5,
-                           num_epochs=1),
+                           num_epochs=4),
               RNNModel(max_len=300,
                        num_folds=1,
                        name='rnn',
@@ -53,7 +67,7 @@ def train_deep_models():
                        num_classes=2,
                        batch_size=32,
                        vocabulary_size=len(vocab),
-                       num_epochs=3),
+                       num_epochs=10),
               DpcnnModel(max_len=300,
                          num_folds=1,
                          name='dpcnn',
@@ -62,7 +76,7 @@ def train_deep_models():
                          num_classes=2,
                          batch_size=32,
                          vocabulary_size=len(vocab),
-                         num_epochs=3)
+                         num_epochs=10)
               ]
     for m in models:
         predict_path = config.output_dir + "%s.csv" % m.name
@@ -79,7 +93,7 @@ def train_bert_model():
                   name='bert',
                   num_classes=2,
                   batch_size=32,
-                  num_epochs=1)
+                  num_epochs=3)
     predict_path = config.output_dir + "%s.csv" % m.name
     submit_path = config.output_dir + "%s_submit.csv" % m.name
     score = m.train_predict(train_x, train_y, test_x, predict_path)
@@ -87,21 +101,7 @@ def train_bert_model():
     print(m.name, score)
 
 
-def train_classic_models():
-    from models.catboost_model import CatBoostModel
-    from models.lr_model import LRModel
-    from models.xgboost_model import XgboostModel  # 该引用必须在bert之前
-    train_x, test_x, train_y = read_features_label()
-    models = [LRModel(), XgboostModel(), CatBoostModel()]
-    for m in models:
-        predict_path = config.output_dir + "%s.csv" % m.name
-        submit_path = config.output_dir + "%s_submit.csv" % m.name
-        score = m.train_predict(train_x, train_y, test_x, predict_path)
-        generate_submit_result(config.data_file_path, predict_path, submit_path=submit_path)
-        print(m.name, score)
-
-
 if __name__ == '__main__':
-    # train_classic_models()
+    train_classic_models()
     train_deep_models()
     train_bert_model()

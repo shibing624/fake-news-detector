@@ -64,6 +64,7 @@ def write_list(lst, out_path):
     with open(out_path, 'w', encoding='utf-8') as f:
         for i in lst:
             f.write(str(i) + '\n')
+    print('save to:', out_path)
 
 
 if __name__ == "__main__":

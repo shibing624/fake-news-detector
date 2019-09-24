@@ -16,7 +16,7 @@ class XgboostModel(BaseClassicModel):
     def create_model(self):
         model = XGBClassifier(max_depth=3,
                               learning_rate=0.1,
-                              n_estimators=200)
+                              n_estimators=300)
         return model
 
     def fit_model(self, model, x_train, y_train, x_valid, y_valid):
