@@ -1,3 +1,5 @@
+numpy
+pandas
 jieba
 scipy
 scikit-learn

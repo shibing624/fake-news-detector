@@ -8,13 +8,6 @@ import pandas as pd
 import config
 from features.onehot_feature import read_onehot_feature_label
 from generate_features import read_features_label
-from models.bert_model import read_bert_feature_label, BertModel
-from models.catboost_model import CatBoostModel
-from models.dpcnn_model import DpcnnModel
-from models.lr_model import LRModel
-from models.rnn_model import RNNModel
-from models.textcnn_model import TextCNNModel
-from models.xgboost_model import XgboostModel
 
 
 def generate_submit_result(data_path, predict_path, submit_path):
@@ -36,6 +29,9 @@ def generate_submit_result(data_path, predict_path, submit_path):
 
 
 def train_deep_models():
+    from models.rnn_model import RNNModel
+    from models.textcnn_model import TextCNNModel
+    from models.dpcnn_model import DpcnnModel
     train_x, test_x, train_y, vocab = read_onehot_feature_label()
     models = [TextCNNModel(max_len=300,
                            num_folds=1,
@@ -77,6 +73,7 @@ def train_deep_models():
 
 
 def train_bert_model():
+    from models.bert_model import read_bert_feature_label, BertModel
     train_x, test_x, train_y = read_bert_feature_label()
     m = BertModel(num_folds=1,
                   name='bert',
@@ -91,6 +88,9 @@ def train_bert_model():
 
 
 def train_classic_models():
+    from models.catboost_model import CatBoostModel
+    from models.lr_model import LRModel
+    from models.xgboost_model import XgboostModel  # 该引用必须在bert之前
     train_x, test_x, train_y = read_features_label()
     models = [LRModel(), XgboostModel(), CatBoostModel()]
     for m in models:
@@ -102,6 +102,6 @@ def train_classic_models():
 
 
 if __name__ == '__main__':
-    # train_classic_models()
+    train_classic_models()
     train_deep_models()
     train_bert_model()
