@@ -19,7 +19,7 @@ class BaseDeepModel(object):
     """
 
     def __init__(self, vocabulary_size=20000,
-                 max_len=400,
+                 max_len=300,
                  name='base_deep_model',
                  num_folds=0,
                  batch_size=64,
@@ -36,7 +36,7 @@ class BaseDeepModel(object):
         self.vocabulary_size = vocabulary_size + 1
         self.num_folds = 1 if num_folds <= 1 else num_folds
         self.num_epochs = num_epochs
-        self.model = self.create_model()
+        self.model = None
 
     def create_model(self):
         raise NotImplementedError("need impl create model.")
@@ -53,6 +53,8 @@ class BaseDeepModel(object):
         :param predict_path: str
         :return:
         """
+        if not self.model:
+            self.model = self.create_model()
         print('train and predict with model:', self.name)
         if not isinstance(train_x, list):
             print('train_x.shape:', train_x.shape)
@@ -116,11 +118,10 @@ class BaseClassicModel(object):
     basic class of classic models
     """
 
-    def __init__(self, num_folds=0, name='base_static_model', params=None):
-        self.params = params
+    def __init__(self, num_folds=0, name='base_static_model'):
         self.name = name
         self.num_folds = 1 if num_folds <= 1 else num_folds
-        self.model = self.create_model()
+        self.model = None
 
     def create_model(self):
         raise NotImplementedError("need impl create model.")
@@ -137,6 +138,8 @@ class BaseClassicModel(object):
         :param predict_path: str
         :return:
         """
+        if not self.model:
+            self.model = self.create_model()
         print('train and predict with model:', self.name)
 
         n_train = len(train_x)

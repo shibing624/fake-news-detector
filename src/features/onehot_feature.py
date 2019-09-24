@@ -56,7 +56,7 @@ class OnehotFeatureGenerator(object):
                 count += 1
 
         # save train and test into separate files
-        data_feature = pad_sequences(sequences, maxlen=400)
+        data_feature = pad_sequences(sequences, maxlen=300)
         print('Shape of Data Tensor:', data_feature.shape)
         train_labels = train['label'].values
         train_labels = to_categorical(train_labels, num_classes=len(pd.value_counts(train_labels)))

@@ -1,8 +1,9 @@
 import pickle
 
+import numpy as np
+
 from src import config
 from src.features.math_util import try_divide
-from src.features.tokenizer import tokenizer
 
 
 class CountFeatureGenerator(object):
@@ -24,12 +25,19 @@ class CountFeatureGenerator(object):
                     list(map(try_divide, df["count_of_unique_%s_%s" % (feat_name, gram)],
                              df["count_of_%s_%s" % (feat_name, gram)]))
 
+                print('mean count_of_%s_%s:' % (feat_name, gram), np.mean(df["count_of_%s_%s" % (feat_name, gram)]))
+                print('mean count_of_unique_%s_%s:' % (feat_name, gram),
+                      np.mean(df["count_of_unique_%s_%s" % (feat_name, gram)]))
+                print('mean ratio_of_unique_%s_%s:' % (feat_name, gram),
+                      np.mean(df["ratio_of_unique_%s_%s" % (feat_name, gram)]))
+
         # number of sentences in text
         for feat_name in feat_names:
-            df['len_sent_%s' % feat_name] = df[feat_name].apply(lambda x: len(tokenizer(x)))
+            df['len_sent_%s' % feat_name] = df[feat_name].apply(lambda x: len(x))
 
         # dump the basic counting features into a file
         feat_names = [n for n in df.columns if "count" in n or "ratio" in n or "len_sent" in n]
+        print(feat_names)
 
         check_words = ["网易新闻",
                        "公安",
@@ -81,3 +89,11 @@ class CountFeatureGenerator(object):
             print('feature names: ', feat_names)
             print('count_feature.shape:', count_feature.shape)
         return [count_feature]
+
+
+if __name__ == '__main__':
+    import pandas as pd
+
+    data = pd.read_pickle(config.ngram_feature_path)
+
+    CountFeatureGenerator().process(data)

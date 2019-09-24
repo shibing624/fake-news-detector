@@ -15,10 +15,10 @@ from src.models.base_model import BaseDeepModel
 
 
 class RNNModel(BaseDeepModel):
-    def __init__(self, max_len=400,
+    def __init__(self, max_len=300,
                  num_folds=1,
                  name='rnn',
-                 embedding_dim=128,
+                 embedding_dim=300,
                  hidden_dim=128,
                  num_classes=2,
                  batch_size=64,

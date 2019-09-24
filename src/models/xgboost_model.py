@@ -14,10 +14,10 @@ class XgboostModel(BaseClassicModel):
         super().__init__(num_folds, name=name)
 
     def create_model(self):
-        model = XGBClassifier(max_depth=2,
-                              learning_rate=1,
-                              n_estimators=50)
+        model = XGBClassifier(max_depth=3,
+                              learning_rate=0.1,
+                              n_estimators=200)
         return model
 
     def fit_model(self, model, x_train, y_train, x_valid, y_valid):
-        model.fit(x_train, y_train, eval_set=[(x_valid, y_valid)], early_stopping_rounds=10)
+        model.fit(x_train, y_train, eval_set=[(x_valid, y_valid)], early_stopping_rounds=3)

@@ -4,7 +4,6 @@
 @description: 
 """
 import os
-import pickle
 
 import numpy as np
 import pandas as pd
@@ -26,12 +25,13 @@ def generate_features_label():
     # -----------------------load data--------------------
     if not os.path.exists(config.ngram_feature_path):
         data = pd.read_pickle(config.data_file_path)
-        print(data.shape)
 
-        # test
-        data_a = data[:1000]
-        data_b = data[-100:]
-        data = pd.concat((data_a, data_b))
+        # debug
+        if config.is_debug:
+            data_a = data[:500]
+            data_b = data[-100:]
+            data = pd.concat((data_a, data_b))
+
         print('data shape:', data.shape)
 
         print("generate unigram")
@@ -47,11 +47,15 @@ def generate_features_label():
         data["text_unigram_str"] = data["text_unigram"].map(lambda x: ' '.join(x))
         print(data.head())
 
-        with open(config.ngram_feature_path, 'wb') as f:
-            pickle.dump(data, f)
-            print('data ngram features saved in ', config.ngram_feature_path)
+        data.to_pickle(config.ngram_feature_path)
+        print('data ngram features saved in ', config.ngram_feature_path)
     else:
         data = pd.read_pickle(config.ngram_feature_path)
+        # debug
+        if config.is_debug:
+            data_a = data[:500]
+            data_b = data[-100:]
+            data = pd.concat((data_a, data_b))
 
     # feature generators
     generators = [CountFeatureGenerator(),
@@ -69,6 +73,11 @@ def generate_features_label():
 
 def read_features_label():
     data = pd.read_pickle(config.ngram_feature_path)
+    # debug
+    if config.is_debug:
+        data_a = data[:500]
+        data_b = data[-100:]
+        data = pd.concat((data_a, data_b))
 
     generators = [CountFeatureGenerator(),
                   SvdFeatureGenerator(),

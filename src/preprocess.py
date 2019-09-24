@@ -17,12 +17,19 @@ label_dict = {'0': 0,  # true
 
 df_tr = pd.read_csv(config.origin_train_file)
 df_tr['type'] = 'train'
+print(df_tr.shape)
+# 文本去重
+df_tr = df_tr.drop_duplicates(["text"], keep="first")
+print('drop_duplicates:', df_tr.shape)
+
+# 文本去太长的, 删除681个长的
+df_tr = df_tr[df_tr['text'].str.len() < 300]
+print('del long text:', df_tr.shape)
 
 df_te = pd.read_csv(config.origin_test_file)
 df_te['label'] = 0
 df_te['type'] = 'test'
 
-print(df_tr.shape)
 print(df_te.shape)
 
 print(df_tr.head(2))
@@ -32,8 +39,9 @@ print(df_te.head(2))
 
 print(df_tr['label'].value_counts())
 
-df_all = pd.concat([df_tr, df_te]).fillna(0)
-df_all.to_pickle(config.data_file_path, protocol=2)
+df_all = pd.concat([df_tr, df_te])
 
-# train count: 38471
+df_all.to_pickle(config.data_file_path)
+
+# train count: 38471， del duplicates count: 33414
 # test count:  4000

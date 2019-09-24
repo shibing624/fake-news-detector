@@ -13,6 +13,9 @@ from src import config
 from src.models.base_model import BaseDeepModel
 from src.models.tokenization import BasicTokenizer
 
+if config.use_gpu:
+    kashgari.config.use_cudnn_cell = True
+
 
 def read_bert_feature_label():
     tokenizer = BasicTokenizer()
@@ -44,25 +47,17 @@ def read_bert_feature_label():
 
 class BertModel(BaseDeepModel):
     def __init__(self, bert_path=config.pretrained_bert_path,
-                 max_len=400,
                  num_folds=1,
                  name='bert',
-                 embedding_dim=128,
-                 hidden_dim=128,
                  num_classes=2,
                  batch_size=64,
-                 vocabulary_size=20000,
                  num_epochs=1,
                  model_path=config.output_dir + 'bert.model'):
         self.bert_path = bert_path
         self.model_path = model_path
-        super(BertModel, self).__init__(max_len=max_len,
-                                        num_folds=num_folds,
+        super(BertModel, self).__init__(num_folds=num_folds,
                                         name=name,
                                         num_classes=num_classes,
-                                        vocabulary_size=vocabulary_size,
-                                        embedding_dim=embedding_dim,
-                                        hidden_dim=hidden_dim,
                                         batch_size=batch_size,
                                         num_epochs=num_epochs)
 
@@ -82,3 +77,4 @@ class BertModel(BaseDeepModel):
     def fit_model(self, model, x_train, y_train, x_valid, y_valid):
         model.fit(x_train, y_train, x_valid, y_valid,
                   batch_size=self.batch_size, epochs=self.num_epochs)
+        model.save(self.model_path)

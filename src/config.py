@@ -18,5 +18,8 @@ ngram_feature_path = output_dir + 'text_ngram.pkl'
 vocab_path = output_dir + 'vocab.txt'
 
 pretrained_bert_path = '/Users/xuming06/Codes/bert/data/chinese_L-12_H-768_A-12'
+is_debug = True
+use_gpu = False
+
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)

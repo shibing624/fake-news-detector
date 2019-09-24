@@ -13,8 +13,8 @@ class CatBoostModel(BaseClassicModel):
         super().__init__(num_folds, name=name)
 
     def create_model(self):
-        model = CatBoostClassifier(loss_function='Logloss', depth=2, n_estimators=10)
+        model = CatBoostClassifier(loss_function='Logloss', depth=6, n_estimators=500)
         return model
 
     def fit_model(self, model, x_train, y_train, x_valid, y_valid):
-        model.fit(x_train, y_train, eval_set=[(x_valid, y_valid)], early_stopping_rounds=10)
+        model.fit(x_train, y_train, eval_set=[(x_valid, y_valid)], early_stopping_rounds=3)

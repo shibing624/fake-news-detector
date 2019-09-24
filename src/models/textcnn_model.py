@@ -15,7 +15,7 @@ from src.models.base_model import BaseDeepModel
 
 
 class TextCNNModel(BaseDeepModel):
-    def __init__(self, max_len=400,
+    def __init__(self, max_len=300,
                  num_folds=1,
                  name='textcnn',
                  filter_sizes='4,5,6',
