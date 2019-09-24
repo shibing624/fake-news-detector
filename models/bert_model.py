@@ -3,17 +3,21 @@
 @author:XuMing（xuming624@qq.com)
 @description: 
 """
+import os
+import sys
 
 import kashgari
 import pandas as pd
 from kashgari.embeddings import BERTEmbedding
 from kashgari.tasks.classification import BiLSTM_Model
 
+sys.path.append('..')
 import config
 from models.base_model import BaseDeepModel
 from models.bert_tokenization import BasicTokenizer
 
 if config.use_gpu:
+    os.environ["CUDA_VISIBLE_DEVICES"] = '5'
     kashgari.config.use_cudnn_cell = True
 
 

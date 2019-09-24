@@ -10,7 +10,7 @@ import pandas as pd
 from sklearn.model_selection import KFold
 from sklearn.model_selection import train_test_split
 
-from models.score import compute_acc
+from models.score import compute_acc, write_list
 
 
 class BaseDeepModel(object):
@@ -95,6 +95,10 @@ class BaseDeepModel(object):
             y_pred_test = self.model.predict(test_x)
             y_pred_train = self.model.predict(train_x)
             accuracy_rate = compute_acc(y_valid, y_pred_valid)
+            if isinstance(y_pred_valid, list):
+                # 兼容bert模型的输出类型
+                write_list(y_pred_test, predict_path)
+                return accuracy_rate
             print('valid acc:', accuracy_rate)
             scores.append(accuracy_rate)
             stack += y_pred_train

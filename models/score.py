@@ -60,6 +60,12 @@ def compute_acc(y_true, y_pred):
     return np.mean(y_true == y_pred)
 
 
+def write_list(lst, out_path):
+    with open(out_path, 'w', encoding='utf-8') as f:
+        for i in lst:
+            f.write(str(i) + '\n')
+
+
 if __name__ == "__main__":
     actual = [0, 0, 0, 0, 1, 1, 0, 1, 1]
     predicted = [0, 0, 0, 0, 1, 1, 0, 1, 0]
