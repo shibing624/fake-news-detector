@@ -6,6 +6,7 @@
 from src import config
 from src.features.generate_features import read_features_label
 from src.features.onehot_feature import read_onehot_feature_label
+from src.models.bert_model import read_bert_feature_label, BertModel
 from src.models.catboost_model import CatBoostModel
 from src.models.lr_model import LRModel
 from src.models.rnn_model import RNNModel
@@ -42,6 +43,13 @@ def train_deep_models():
         print(m.name, score)
 
 
+def train_bert_model():
+    train_x, test_x, train_y = read_bert_feature_label()
+    m = BertModel()
+    score = m.train_predict(train_x, train_y, test_x, predict_path=config.output_dir + "%s.csv" % m.name)
+    print(m.name, score)
+
+
 def train_classic_models():
     train_x, test_x, train_y = read_features_label()
     models = [LRModel(), XgboostModel(), CatBoostModel()]
@@ -52,5 +60,7 @@ def train_classic_models():
 
 
 if __name__ == '__main__':
-    train_classic_models()
     # train_deep_models()
+    train_bert_model()
+    # train_classic_models()
+

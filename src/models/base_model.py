@@ -47,26 +47,28 @@ class BaseDeepModel(object):
     def train_predict(self, train_x, train_y, test_x, predict_path):
         """
         train model and predict test result
-        :param train_x: list
-        :param train_y: list
-        :param test_x: list
+        :param train_x: list or array
+        :param train_y: list or array
+        :param test_x: list or array
         :param predict_path: str
         :return:
         """
         print('train and predict with model:', self.name)
-        print('train_x.shape:', train_x.shape)
-        print('train_y.shape:', train_y.shape)
-        print('test_x.shape:', test_x.shape)
+        if not isinstance(train_x, list):
+            print('train_x.shape:', train_x.shape)
+            print('train_y.shape:', train_y.shape)
+            print('test_x.shape:', test_x.shape)
 
         n_train = len(train_x)
+        n_test = len(test_x)
         train_y = train_y[:n_train]
-        print('train_y.shape:', train_y.shape)
-        print('n_train', n_train)
-        print('y size:', len(train_y))
+        print('n_train:', n_train)
+        print('n_test:', n_test)
+        print('n_train_y:', len(train_y))
         print('num_classes:', self.num_classes)
 
-        stack = np.zeros((train_x.shape[0], self.num_classes))
-        stack_test = np.zeros((test_x.shape[0], self.num_classes))
+        stack = np.zeros((n_train, self.num_classes))
+        stack_test = np.zeros((n_test, self.num_classes))
         scores = []
         if self.num_folds > 1:
             kf = KFold(n_splits=self.num_folds, shuffle=True, random_state=10)
@@ -129,20 +131,26 @@ class BaseClassicModel(object):
     def train_predict(self, train_x, train_y, test_x, predict_path):
         """
         train model and predict test result
-        :param train_x: list
-        :param train_y: list
+        :param train_x: list or array
+        :param train_y: list or array
         :param test_x: list
         :param predict_path: str
         :return:
         """
         print('train and predict with model:', self.name)
+
         n_train = len(train_x)
+        n_test = len(test_x)
         train_y = train_y[:n_train]
-        print('y size:', len(train_y), '\nvalue_counts:\n', pd.value_counts(train_y))
-        num_class = len(pd.value_counts(train_y))
-        print('num_class:', num_class)
-        stack = np.zeros((train_x.shape[0], num_class))
-        stack_test = np.zeros((test_x.shape[0], num_class))
+        print('n_train:', n_train)
+        print('n_test:', n_test)
+        print('n_train_y:', len(train_y))
+        print('y value_counts:\n', pd.value_counts(train_y))
+        num_classes = len(pd.value_counts(train_y))
+        print('num_classes:', num_classes)
+
+        stack = np.zeros((n_train, num_classes))
+        stack_test = np.zeros((n_test, num_classes))
         scores = []
         if self.num_folds > 1:
             kf = KFold(n_splits=self.num_folds, shuffle=True, random_state=10)
