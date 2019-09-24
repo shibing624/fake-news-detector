@@ -4,11 +4,12 @@
 @description: 
 """
 
+import os
 import re
 
 import jieba
-import os
-from src import config
+
+import config
 
 
 def load_set(path):

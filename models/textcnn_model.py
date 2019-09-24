@@ -10,8 +10,8 @@ from keras.layers import Embedding
 from keras.layers.merge import Concatenate
 from keras.models import Model
 
-from src import config
-from src.models.base_model import BaseDeepModel
+import config
+from models.base_model import BaseDeepModel
 
 
 class TextCNNModel(BaseDeepModel):

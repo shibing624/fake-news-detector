@@ -2,12 +2,12 @@
 """
 @author:XuMing（xuming624@qq.com)
 @description: 1.concat train data and test data
-   2.use lr to fill null label
+              2.drop duplicates and trim long text
 """
 
 import pandas as pd
 
-from src import config
+import config
 
 label_dict = {'0': 0,  # true
               '1': 1  # fake

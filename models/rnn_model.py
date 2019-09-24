@@ -10,8 +10,8 @@ from keras.layers import Embedding
 from keras.layers import LSTM, Bidirectional
 from keras.models import Model
 
-from src import config
-from src.models.base_model import BaseDeepModel
+import config
+from models.base_model import BaseDeepModel
 
 
 class RNNModel(BaseDeepModel):

@@ -2,8 +2,8 @@ import pickle
 
 import numpy as np
 
-from src import config
-from src.features.math_util import try_divide
+import config
+from features.math_util import try_divide
 
 
 class CountFeatureGenerator(object):

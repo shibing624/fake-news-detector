@@ -3,20 +3,17 @@
 @author:XuMing（xuming624@qq.com)
 @description: 
 """
+from catboost import CatBoostClassifier
 
-from xgboost import XGBClassifier
-
-from src.models.base_model import BaseClassicModel
+from models.base_model import BaseClassicModel
 
 
-class XgboostModel(BaseClassicModel):
-    def __init__(self, num_folds=1, name='xgboost'):
+class CatBoostModel(BaseClassicModel):
+    def __init__(self, num_folds=1, name='catboost'):
         super().__init__(num_folds, name=name)
 
     def create_model(self):
-        model = XGBClassifier(max_depth=3,
-                              learning_rate=0.1,
-                              n_estimators=200)
+        model = CatBoostClassifier(loss_function='Logloss', depth=6, n_estimators=500)
         return model
 
     def fit_model(self, model, x_train, y_train, x_valid, y_valid):

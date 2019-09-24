@@ -8,17 +8,17 @@ import os
 import numpy as np
 import pandas as pd
 from scipy.sparse import csr_matrix
+from features import ngram
+from features.char_tfidf_feature import CharTfidfFeatureGenerator
+from features.count_feature import CountFeatureGenerator
+from features.onehot_feature import OnehotFeatureGenerator
+from features.sentiment_feature import SentimentFeatureGenerator
+from features.tfidf_feature import TfidfFeatureGenerator
+from features.tokenizer import tokenizer
+from features.word2vec_feature import Word2VecFeatureGenerator
 
-from src import config
-from src.features import ngram
-from src.features.char_tfidf_feature import CharTfidfFeatureGenerator
-from src.features.count_feature import CountFeatureGenerator
-from src.features.onehot_feature import OnehotFeatureGenerator
-from src.features.sentiment_feature import SentimentFeatureGenerator
-from src.features.svd_feature import SvdFeatureGenerator
-from src.features.tfidf_feature import TfidfFeatureGenerator
-from src.features.tokenizer import tokenizer
-from src.features.word2vec_feature import Word2VecFeatureGenerator
+import config
+from features.svd_feature import SvdFeatureGenerator
 
 
 def generate_features_label():

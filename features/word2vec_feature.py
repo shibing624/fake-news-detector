@@ -11,7 +11,7 @@ import gensim
 import numpy as np
 from sklearn.preprocessing import normalize
 
-from src import config
+import config
 
 
 def save_sentence(lines, sentence_path):

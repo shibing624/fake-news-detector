@@ -10,7 +10,7 @@ import pandas as pd
 from sklearn.model_selection import KFold
 from sklearn.model_selection import train_test_split
 
-from src.models.score import compute_acc
+from models.score import compute_acc
 
 
 class BaseDeepModel(object):

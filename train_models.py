@@ -5,16 +5,16 @@
 """
 import pandas as pd
 
-from src import config
-from src.features.generate_features import read_features_label
-from src.features.onehot_feature import read_onehot_feature_label
-from src.models.bert_model import read_bert_feature_label, BertModel
-from src.models.catboost_model import CatBoostModel
-from src.models.lr_model import LRModel
-from src.models.rnn_model import RNNModel
-from src.models.textcnn_model import TextCNNModel
-from src.models.dpcnn_model import DpcnnModel
-from src.models.xgboost_model import XgboostModel
+import config
+from features.onehot_feature import read_onehot_feature_label
+from generate_features import read_features_label
+from models.bert_model import read_bert_feature_label, BertModel
+from models.catboost_model import CatBoostModel
+from models.dpcnn_model import DpcnnModel
+from models.lr_model import LRModel
+from models.rnn_model import RNNModel
+from models.textcnn_model import TextCNNModel
+from models.xgboost_model import XgboostModel
 
 
 def generate_submit_result(data_path, predict_path, submit_path):
@@ -27,7 +27,7 @@ def generate_submit_result(data_path, predict_path, submit_path):
 
     df_predict = pd.read_csv(predict_path)
     df = df.reset_index(drop=True)
-    df_predict=df_predict.reset_index(drop=True)
+    df_predict = df_predict.reset_index(drop=True)
     result_all = pd.concat([df, df_predict], axis=1)
     result = result_all.loc[n_train:, ['id', 'predict_label']]
     result.rename(columns={'predict_label': 'label'}, inplace=True)

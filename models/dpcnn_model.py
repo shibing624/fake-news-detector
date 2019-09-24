@@ -8,8 +8,8 @@ from keras.callbacks import ModelCheckpoint
 from keras.layers import Input, Embedding, SpatialDropout1D, Conv1D, Flatten, Dense, Activation, Add, MaxPooling1D
 from keras.models import Model
 
-from src import config
-from src.models.base_model import BaseDeepModel
+import config
+from models.base_model import BaseDeepModel
 
 
 class DpcnnModel(BaseDeepModel):

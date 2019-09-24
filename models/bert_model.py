@@ -9,9 +9,9 @@ import pandas as pd
 from kashgari.embeddings import BERTEmbedding
 from kashgari.tasks.classification import BiLSTM_Model
 
-from src import config
-from src.models.base_model import BaseDeepModel
-from src.models.tokenization import BasicTokenizer
+import config
+from models.base_model import BaseDeepModel
+from models.bert_tokenization import BasicTokenizer
 
 if config.use_gpu:
     kashgari.config.use_cudnn_cell = True

@@ -8,7 +8,7 @@ import pickle
 import pandas as pd
 from pysenti import rule_classifier
 
-from src import config
+import config
 
 
 class SentimentFeatureGenerator(object):

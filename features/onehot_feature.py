@@ -5,13 +5,12 @@
 """
 import pickle
 
-from keras.utils import to_categorical
-
 import pandas as pd
 from keras.preprocessing.sequence import pad_sequences
 from keras.preprocessing.text import Tokenizer
+from keras.utils import to_categorical
 
-from src import config
+import config
 
 
 def save_vocab(vocab, vocab_path):

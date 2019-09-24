@@ -5,13 +5,11 @@
 """
 import pickle
 
-import numpy as np
 from scipy.sparse import vstack
 from sklearn.decomposition import TruncatedSVD
 
-from src import config
-from src.features.math_util import cosine_sim
-from src.features.tfidf_feature import TfidfFeatureGenerator
+import config
+from features.tfidf_feature import TfidfFeatureGenerator
 
 
 class SvdFeatureGenerator(object):

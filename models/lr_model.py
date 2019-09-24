@@ -6,7 +6,7 @@
 
 from sklearn.linear_model import LogisticRegression
 
-from src.models.base_model import BaseClassicModel
+from models.base_model import BaseClassicModel
 
 
 class LRModel(BaseClassicModel):
