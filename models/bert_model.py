@@ -3,7 +3,6 @@
 @author:XuMing（xuming624@qq.com)
 @description: 
 """
-import os
 import sys
 
 import kashgari
@@ -15,10 +14,6 @@ sys.path.append('..')
 import config
 from models.base_model import BaseDeepModel
 from models.bert_tokenization import BasicTokenizer
-
-if config.use_gpu:
-    os.environ["CUDA_VISIBLE_DEVICES"] = '5'
-    kashgari.config.use_cudnn_cell = True
 
 
 def read_bert_feature_label():
@@ -81,7 +76,8 @@ class BertModel(BaseDeepModel):
     def fit_model(self, model, x_train, y_train, x_valid, y_valid):
         model.fit(x_train, y_train, x_valid, y_valid,
                   batch_size=self.batch_size, epochs=self.num_epochs)
-        model.save(self.model_path)
+        if not config.is_debug:
+            model.save(self.model_path)
 
 
 if __name__ == '__main__':

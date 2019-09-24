@@ -43,5 +43,5 @@ df_all = pd.concat([df_tr, df_te])
 
 df_all.to_pickle(config.data_file_path)
 
-# train count: 38471， del duplicates count: 33414
+# train count: 38471， del duplicates count: 33414, del long: 32733
 # test count:  4000
