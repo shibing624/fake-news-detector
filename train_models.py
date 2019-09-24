@@ -79,7 +79,7 @@ def train_bert_model():
                   name='bert',
                   num_classes=2,
                   batch_size=32,
-                  num_epochs=3)
+                  num_epochs=1)
     predict_path = config.output_dir + "%s.csv" % m.name
     submit_path = config.output_dir + "%s_submit.csv" % m.name
     score = m.train_predict(train_x, train_y, test_x, predict_path)
@@ -102,6 +102,6 @@ def train_classic_models():
 
 
 if __name__ == '__main__':
-    train_classic_models()
-    train_deep_models()
+    # train_classic_models()
+    # train_deep_models()
     train_bert_model()

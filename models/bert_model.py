@@ -78,3 +78,17 @@ class BertModel(BaseDeepModel):
         model.fit(x_train, y_train, x_valid, y_valid,
                   batch_size=self.batch_size, epochs=self.num_epochs)
         model.save(self.model_path)
+
+if __name__ == '__main__':
+    train_x, test_x, train_y = read_bert_feature_label()
+    m = BertModel(num_folds=1,
+                  name='bert',
+                  num_classes=2,
+                  batch_size=32,
+                  num_epochs=1)
+    # score = m.train_predict(train_x, train_y, test_x, predict_path)
+    model = kashgari.utils.load_model(config.output_dir + 'bert.model')
+    y_pred_train = model.predict(train_x[:5])
+    from models.score import compute_acc
+    accuracy_rate = compute_acc(train_y, y_pred_train)
+    print(m.name, accuracy_rate)
