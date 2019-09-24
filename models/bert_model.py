@@ -90,5 +90,5 @@ if __name__ == '__main__':
     model = kashgari.utils.load_model(config.output_dir + 'bert.model')
     y_pred_train = model.predict(train_x[:5])
     from models.score import compute_acc
-    accuracy_rate = compute_acc(train_y, y_pred_train)
+    accuracy_rate = compute_acc(train_y[:5], y_pred_train)
     print(m.name, accuracy_rate)

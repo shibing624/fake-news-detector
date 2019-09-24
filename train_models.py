@@ -44,7 +44,7 @@ def train_deep_models():
                            batch_size=32,
                            vocabulary_size=len(vocab),
                            dropout=0.5,
-                           num_epochs=3),
+                           num_epochs=1),
               RNNModel(max_len=300,
                        num_folds=1,
                        name='rnn',
@@ -103,5 +103,5 @@ def train_classic_models():
 
 if __name__ == '__main__':
     # train_classic_models()
-    # train_deep_models()
+    train_deep_models()
     train_bert_model()

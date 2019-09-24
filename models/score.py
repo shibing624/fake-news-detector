@@ -53,7 +53,8 @@ def report_score(actual, predicted):
 def compute_acc(y_true, y_pred):
     if not isinstance(y_true, list) and len(y_true.shape) > 1:
         y_true = np.argmax(y_true, axis=1)
-    y_pred = np.argmax(y_pred, axis=1)
+    if not isinstance(y_pred, list) and len(y_pred.shape) > 1:
+        y_pred = np.argmax(y_pred, axis=1)
     print(classification_report(y_true, y_pred))
     print(confusion_matrix(y_true, y_pred))
     return np.mean(y_true == y_pred)
