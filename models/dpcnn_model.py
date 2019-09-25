@@ -4,7 +4,7 @@
 @description: DPCNN（Deep Pyramid Convolutional Neural Networksfor Text Categorization）
 """
 
-from keras.callbacks import ModelCheckpoint
+from keras.callbacks import ModelCheckpoint, EarlyStopping
 from keras.layers import Input, Embedding, SpatialDropout1D, Conv1D, Flatten, Dense, Activation, Add, MaxPooling1D
 from keras.models import Model
 
@@ -78,7 +78,8 @@ class DpcnnModel(BaseDeepModel):
         return model
 
     def fit_model(self, model, x_train, y_train, x_valid, y_valid):
+        es = EarlyStopping(monitor='val_loss', patience=2, verbose=1, mode='auto')
         cp = ModelCheckpoint(self.model_path, monitor='val_acc', verbose=1, save_best_only=True)
         # fit and save model
         model.fit(x_train, y_train, batch_size=self.batch_size, epochs=self.num_epochs,
-                  validation_data=(x_valid, y_valid), callbacks=[cp])
+                  validation_data=(x_valid, y_valid), callbacks=[cp, es])
