@@ -93,7 +93,8 @@ def train_bert_model():
                   name='bert',
                   num_classes=2,
                   batch_size=32,
-                  num_epochs=5)
+                  num_epochs=5,
+                  model_path=config.output_dir + 'bert_kmaxcnn_model')
     predict_path = config.output_dir + "%s.csv" % m.name
     score = m.train_predict(train_x, train_y, test_x, predict_path)
     print(m.name, score)
