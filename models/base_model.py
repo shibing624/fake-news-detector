@@ -21,7 +21,7 @@ class BaseDeepModel(object):
     def __init__(self, vocabulary_size=20000,
                  max_len=300,
                  name='base_deep_model',
-                 num_folds=0,
+                 num_folds=1,
                  batch_size=64,
                  num_classes=2,
                  embedding_dim=128,
@@ -84,10 +84,6 @@ class BaseDeepModel(object):
                 y_pred_valid = self.model.predict(x_valid)
                 y_pred_test = self.model.predict(test_x)
                 accuracy_rate = compute_acc(y_valid, y_pred_valid)
-                if isinstance(y_pred_test, list):
-                    # 兼容bert模型的输出类型
-                    write_list(y_pred_test, predict_path)
-                    return accuracy_rate
                 print('valid acc:', accuracy_rate)
                 scores.append(accuracy_rate)
                 stack[va] += y_pred_valid

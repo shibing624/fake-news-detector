@@ -47,7 +47,6 @@ def read_bert_feature_label():
 class BertModel(BaseDeepModel):
     def __init__(self, bert_path=config.pretrained_bert_path,
                  max_len=200,
-                 num_folds=1,
                  name='bert',
                  num_classes=2,
                  batch_size=32,
@@ -56,7 +55,6 @@ class BertModel(BaseDeepModel):
         self.bert_path = bert_path
         self.model_path = model_path
         super(BertModel, self).__init__(max_len=max_len,
-                                        num_folds=num_folds,
                                         name=name,
                                         num_classes=num_classes,
                                         batch_size=batch_size,
@@ -83,8 +81,7 @@ class BertModel(BaseDeepModel):
 
 if __name__ == '__main__':
     train_x, test_x, train_y = read_bert_feature_label()
-    m = BertModel(num_folds=1,
-                  name='bert',
+    m = BertModel(name='bert',
                   num_classes=2,
                   batch_size=32,
                   num_epochs=1)

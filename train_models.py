@@ -90,15 +90,12 @@ def train_bert_model():
     from models.bert_model import read_bert_feature_label, BertModel
     train_x, test_x, train_y = read_bert_feature_label()
     m = BertModel(max_len=200,
-                  num_folds=1,
                   name='bert',
                   num_classes=2,
                   batch_size=32,
                   num_epochs=10)
     predict_path = config.output_dir + "%s.csv" % m.name
-    # submit_path = config.output_dir + "%s_submit.csv" % m.name
     score = m.train_predict(train_x, train_y, test_x, predict_path)
-    # generate_submit_result(config.data_file_path, predict_path, submit_path=submit_path)
     print(m.name, score)
 
 
