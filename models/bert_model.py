@@ -8,7 +8,7 @@ import sys
 import kashgari
 import pandas as pd
 from kashgari.embeddings import BERTEmbedding
-from kashgari.tasks.classification import BiLSTM_Model
+from kashgari.tasks.classification import KMax_CNN_Model
 
 sys.path.append('..')
 import config
@@ -46,22 +46,24 @@ def read_bert_feature_label():
 
 class BertModel(BaseDeepModel):
     def __init__(self, bert_path=config.pretrained_bert_path,
+                 max_len=200,
                  num_folds=1,
                  name='bert',
                  num_classes=2,
-                 batch_size=64,
-                 num_epochs=1,
-                 model_path=config.output_dir + 'bert.model'):
+                 batch_size=32,
+                 num_epochs=10,
+                 model_path=config.output_dir + 'bert_kmaxcnn_model'):
         self.bert_path = bert_path
         self.model_path = model_path
-        super(BertModel, self).__init__(num_folds=num_folds,
+        super(BertModel, self).__init__(max_len=max_len,
+                                        num_folds=num_folds,
                                         name=name,
                                         num_classes=num_classes,
                                         batch_size=batch_size,
                                         num_epochs=num_epochs)
 
     def create_model(self):
-        print("Creating bert embedding bi-lstm Model...")
+        print("Creating bert embedding KMax CNN Model...")
 
         # 初始化 Embedding
         embed = BERTEmbedding(model_folder=self.bert_path,
@@ -69,8 +71,7 @@ class BertModel(BaseDeepModel):
                               sequence_length=self.max_len)
 
         # 使用 embedding 初始化模型
-        model = BiLSTM_Model(embed)
-        print(BiLSTM_Model.get_default_hyper_parameters())
+        model = KMax_CNN_Model(embed)
         return model
 
     def fit_model(self, model, x_train, y_train, x_valid, y_valid):
@@ -88,8 +89,8 @@ if __name__ == '__main__':
                   batch_size=32,
                   num_epochs=1)
     # score = m.train_predict(train_x, train_y, test_x, predict_path)
-    model = kashgari.utils.load_model(config.output_dir + 'bert.model')
-    y_pred_train = model.predict(train_x[:5])
+    b_model = kashgari.utils.load_model(config.output_dir + 'bert.model')
+    y_pred_train = b_model.predict(train_x[:5])
     from models.score import compute_acc
 
     train_y = [str(i) for i in train_y[:5]]

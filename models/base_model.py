@@ -84,6 +84,10 @@ class BaseDeepModel(object):
                 y_pred_valid = self.model.predict(x_valid)
                 y_pred_test = self.model.predict(test_x)
                 accuracy_rate = compute_acc(y_valid, y_pred_valid)
+                if isinstance(y_pred_test, list):
+                    # 兼容bert模型的输出类型
+                    write_list(y_pred_test, predict_path)
+                    return accuracy_rate
                 print('valid acc:', accuracy_rate)
                 scores.append(accuracy_rate)
                 stack[va] += y_pred_valid
@@ -93,14 +97,14 @@ class BaseDeepModel(object):
             self.fit_model(self.model, x_train, y_train, x_valid, y_valid)
             y_pred_valid = self.model.predict(x_valid)
             y_pred_test = self.model.predict(test_x)
-            y_pred_train = self.model.predict(train_x)
             accuracy_rate = compute_acc(y_valid, y_pred_valid)
-            if isinstance(y_pred_valid, list):
+            if isinstance(y_pred_test, list):
                 # 兼容bert模型的输出类型
                 write_list(y_pred_test, predict_path)
                 return accuracy_rate
             print('valid acc:', accuracy_rate)
             scores.append(accuracy_rate)
+            y_pred_train = self.model.predict(train_x)
             stack += y_pred_train
             stack_test += y_pred_test
         stack_test /= self.num_folds
