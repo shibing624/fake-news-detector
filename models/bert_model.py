@@ -3,6 +3,7 @@
 @author:XuMing（xuming624@qq.com)
 @description: 
 """
+import os
 import sys
 
 import kashgari
@@ -61,15 +62,19 @@ class BertModel(BaseDeepModel):
                                         num_epochs=num_epochs)
 
     def create_model(self):
-        print("Creating bert embedding KMax CNN Model...")
+        if os.path.exists(self.model_path):
+            print("Loading bert embedding KMax CNN Model...")
+            model = kashgari.utils.load_model(self.model_path)
+        else:
+            print("Creating bert embedding KMax CNN Model...")
 
-        # 初始化 Embedding
-        embed = BERTEmbedding(model_folder=self.bert_path,
-                              task=kashgari.CLASSIFICATION,
-                              sequence_length=self.max_len)
+            # 初始化 Embedding
+            embed = BERTEmbedding(model_folder=self.bert_path,
+                                  task=kashgari.CLASSIFICATION,
+                                  sequence_length=self.max_len)
 
-        # 使用 embedding 初始化模型
-        model = KMax_CNN_Model(embed)
+            # 使用 embedding 初始化模型
+            model = KMax_CNN_Model(embed)
         return model
 
     def fit_model(self, model, x_train, y_train, x_valid, y_valid):
