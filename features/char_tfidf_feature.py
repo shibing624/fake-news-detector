@@ -5,6 +5,7 @@
 """
 import pickle
 
+import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_selection import SelectPercentile
 from sklearn.feature_selection import chi2
@@ -68,6 +69,7 @@ class CharTfidfFeatureGenerator(object):
             pickle.dump(tfidf_train, f)
         print('text tfidf features of training set saved in %s' % tfidf_train_feature_path)
 
+        tfidf_test = None
         if n_test > 0:
             # test set is available
             tfidf_test = text_tfidf[n_train:, :]
@@ -75,6 +77,7 @@ class CharTfidfFeatureGenerator(object):
             with open(tfidf_test_feature_path, "wb") as f:
                 pickle.dump(tfidf_test, f)
             print('text tfidf features of test set saved in %s' % tfidf_test_feature_path)
+        return tfidf_train.toarray(), tfidf_test.toarray(), train['label'].values
 
     def read(self, header='train'):
         text_feature_path = config.output_dir + "%s.text.char.tfidf.pkl" % header
@@ -84,9 +87,12 @@ class CharTfidfFeatureGenerator(object):
         return [text_tfidf]
 
 
-if __name__ == '__main__':
-    import pandas as pd
+def read_chartfidf_feature_label():
+    data = pd.read_pickle(config.ngram_feature_path)
+    return CharTfidfFeatureGenerator().process(data)
 
+
+if __name__ == '__main__':
     data = pd.read_pickle(config.ngram_feature_path)
 
     CharTfidfFeatureGenerator().process(data)

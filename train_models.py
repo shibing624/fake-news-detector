@@ -6,6 +6,7 @@
 import pandas as pd
 
 import config
+from features.char_tfidf_feature import read_chartfidf_feature_label
 from features.onehot_feature import read_onehot_feature_label
 from generate_features import read_features_label
 
@@ -26,6 +27,17 @@ def generate_submit_result(data_path, predict_path, submit_path):
     result.rename(columns={'predict_label': 'label'}, inplace=True)
     result.to_csv(submit_path, columns=["id", "label"], index=False, encoding='utf-8')
     print('generate submit file:', submit_path)
+
+
+def base_model():
+    from models.lr_model import LRModel
+    train_x, test_x, train_y = read_chartfidf_feature_label()
+    m = LRModel()
+    predict_path = config.output_dir + "%s_chartfidf.csv" % m.name
+    submit_path = config.output_dir + "%s_chartfidf_submit.csv" % m.name
+    score = m.train_predict(train_x, train_y, test_x, predict_path)
+    generate_submit_result(config.data_file_path, predict_path, submit_path=submit_path)
+    print(m.name, score)
 
 
 def train_classic_models():
@@ -101,6 +113,7 @@ def train_bert_model():
 
 
 if __name__ == '__main__':
-    train_classic_models()
-    train_deep_models()
-    train_bert_model()
+    base_model()
+    # train_classic_models()
+    # train_deep_models()
+    # train_bert_model()

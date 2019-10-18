@@ -23,6 +23,7 @@ def load_set(path):
 
 
 def tokenizer(line, filter_stopwords=False, cut_type='word'):
+    line = str(line)
     if cut_type == 'word':
         seg_list = jieba.lcut(line)
     elif cut_type == 'char':

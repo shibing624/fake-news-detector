@@ -18,8 +18,4 @@ class LRModel(BaseClassicModel):
         return model
 
     def fit_model(self, model, x_train, y_train, x_valid, y_valid):
-        print('x_train.shape:', x_train.shape)
-        print('y_train.shape:', y_train.shape)
-        print('x_valid.shape:', x_valid.shape)
-        print('y_valid.shape:', y_valid.shape)
         model.fit(x_train, y_train)
