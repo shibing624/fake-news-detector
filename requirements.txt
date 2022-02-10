@@ -8,5 +8,5 @@ pysenti
 xgboost
 catboost
 keras
-tensorflow==1.14.0
+#tensorflow==1.14.0
 kashgari-tf
